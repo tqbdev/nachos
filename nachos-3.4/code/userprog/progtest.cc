@@ -14,6 +14,40 @@
 #include "addrspace.h"
 #include "synch.h"
 
+void 
+StartProcess_2(int id)
+{
+	AddrSpace *space;
+	char* filename = pTab->GetName(id);
+	OpenFile *executable = fileSystem->Open(filename);
+	
+	if (executable == NULL) 
+	{
+		ASSERT(FALSE);
+		printf("Unable to open file %s\n", filename);
+		DEBUG('a', "\nUnable to open file\n");
+		return;
+   	}
+		
+	space = new AddrSpace(executable);
+	if (!space)
+	{
+		ASSERT(FALSE);
+		printf("PCB::Exec : Khong the tao 1 mot AddSpace\n");
+		DEBUG('a', "\nPCB::Exec : Khong the tao 1 mot AddSpace\n");
+		return;
+	}
+
+	currentThread->space = space;
+	delete executable;
+
+	space->InitRegisters();
+	space->RestoreState();
+
+	machine->Run();
+	ASSERT(FALSE);
+}
+
 //----------------------------------------------------------------------
 // StartProcess
 // 	Run a user program.  Open the executable, load it into

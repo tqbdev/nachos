@@ -39,6 +39,7 @@
 #define SC_ScanLine	14
 #define SC_CloseFile	15
 #define SC_Seek		16
+#define SC_PrintChar 17
 
 #ifndef IN_ASM
 
@@ -126,6 +127,9 @@ int CloseFile(OpenFileId id);
 
 /* Print function, print string to console */
 void print(char *str);
+
+/* Print char function, print one char to console */
+void PrintChar(char c);
 
 /* Read one char from console */
 char ScanChar();

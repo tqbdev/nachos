@@ -448,6 +448,14 @@ ExceptionHandler(ExceptionType which)
 				break;
 			}
 			
+			case SC_PrintChar:
+			{
+				char c;
+				c = machine->ReadRegister(4);	// read arg char
+				gSynchConsole->Write(&c, 1);	// print char
+				break;
+			}
+			
 			case SC_ScanLine:
 			{
 				int virtAddr;
@@ -480,6 +488,71 @@ ExceptionHandler(ExceptionType which)
 				machine->WriteRegister(2, sz); // tra ve so ky tu lay duoc cho chuong trinh nguoi dung
 				
 				delete[] str;
+				break;
+			}
+			
+			case SC_Join:
+			{
+				int id, res;
+				
+				// Doc pid tu thanh ghi r4 len
+				id = machine->ReadRegister(4);
+				
+				// Goi JoinUpdate cua PTable
+				res = pTab->JoinUpdate(id);
+				
+				// Tra ket qua ve cho nguoi dung
+				machine->WriteRegister(2,res);
+				break;
+			}
+			
+			case SC_Exit:
+			{
+				int exitStatus, res;
+				
+				// Doc exitcode tu thanh ghi r4 len
+				exitStatus = machine->ReadRegister(4);
+				
+				// Goi ExitUpdate cua PTable
+				res = pTab->ExitUpdate(exitStatus);
+				
+				// Giai phong frame
+				delete currentThread->space;
+				// Giai phong ten thread
+				delete currentThread->getName();
+
+				// Ket thuc thread
+				currentThread->Finish();
+				
+				// Tra ket qua ve cho nguoi dung
+				machine->WriteRegister(2, res);
+				break;
+			}
+			
+			case SC_Exec:
+			{
+				// Get address of the file name
+				int buffAddr;
+				buffAddr = machine->ReadRegister(4);
+				
+				// Lay duong dan - name thread
+				char* name = machine->User2System(buffAddr, 100);
+				
+				OpenFile *file = fileSystem->Open(name);
+	   			if (file == NULL)
+				{
+					printf("\nExec:: Can't open this file.");
+					machine->WriteRegister(2,-1);
+					break;
+				}
+
+				delete file;
+
+				// Goi ExecUpdate cua PTable. Return child process id
+				int id = pTab->ExecUpdate(name);
+				
+				// Bien name se duoc thread su dung, shallow copy, nen khong giai phong vung nho name o day
+				machine->WriteRegister(2,id);
 				break;
 			}
 							

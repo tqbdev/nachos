@@ -146,6 +146,14 @@ print:
 	j	$31
 	.end print
 	
+	.globl PrintChar
+	.ent	PrintChar
+PrintChar:
+	addiu $2,$0,SC_PrintChar
+	syscall
+	j	$31
+	.end PrintChar
+	
 	.globl ScanChar
 	.ent	ScanChar
 ScanChar:
