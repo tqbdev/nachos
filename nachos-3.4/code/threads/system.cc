@@ -31,6 +31,7 @@ SynchDisk   *synchDisk;
 Machine *machine;	// user program memory and registers
 SynchConsole *gSynchConsole;
 PTable *pTab;
+STable *semTab;
 Semaphore *addrLock;
 BitMap *gPhysPageBitMap;
 #endif
@@ -155,6 +156,7 @@ Initialize(int argc, char **argv)
     machine = new Machine(debugUserProg);	// this must come first
     gSynchConsole = new SynchConsole();
     pTab = new PTable(10);
+   	semTab = new STable();
     addrLock = new Semaphore("addrLock", 1);
 	gPhysPageBitMap = new BitMap(NumPhysPages);
 #endif
@@ -189,6 +191,7 @@ Cleanup()
     delete gSynchConsole;
     delete addrLock;
     delete gPhysPageBitMap;
+    delete semTab;
     //delete pTab;
 #endif
 

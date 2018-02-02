@@ -555,6 +555,81 @@ ExceptionHandler(ExceptionType which)
 				machine->WriteRegister(2,id);
 				break;
 			}
+			
+			case SC_CreateSemaphore:
+			{
+				int addrName, semval, result;
+				char *name;
+				addrName = machine->ReadRegister(4);
+				semval = machine->ReadRegister(5);
+
+				name = machine->User2System(addrName, 100);
+
+				if(name == NULL)
+				{
+					printf("CreateSemaphore:: cannot copy name.\n");
+					machine->WriteRegister(2,-1);
+					break;
+				}
+
+				result = semTab->Create(name,semval);
+
+				if(result < 0)
+				{
+					printf("CreateSemaphore:: Can't create semaphore.\n");
+					machine->WriteRegister(2,-1);
+					break;
+				}
+				// Successfully
+				machine->WriteRegister(2,result);
+				break;
+			}
+			
+			case SC_Up:
+			{
+				int addrName = machine->ReadRegister(4);
+				char *name = machine->User2System(addrName,100);
+
+				if(name == NULL)
+				{
+					printf("Up:: cannot copy name.\n");
+					machine->WriteRegister(2,-1);
+					break;
+				}
+
+				int res = semTab->Signal(name);
+				if(res < 0)
+				{
+					printf("Up:: cannot find semaphore.\n");
+					machine->WriteRegister(2,-1);
+					break;
+				}
+				machine->WriteRegister(2,res);
+				break;
+			}
+			
+			case SC_Down:
+			{
+				int addrName = machine->ReadRegister(4);
+				char *name = machine->User2System(addrName,100);
+
+				if(name == NULL)
+				{
+					printf("Down:: cannot copy name.\n");
+					machine->WriteRegister(2,-1);
+					break;
+				}
+
+				int res = semTab->Wait(name);
+				if(res < 0)
+				{
+					printf("Down:: cannot find semaphore.\n");
+					machine->WriteRegister(2,-1);
+					break;
+				}
+				machine->WriteRegister(2,res);
+				break;
+			}
 							
 			default:
 				printf("Unexpected user mode exception %d %d\n", which, type);

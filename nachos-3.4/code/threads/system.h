@@ -36,6 +36,8 @@ extern Machine* machine;	// user program memory and registers
 extern SynchConsole* gSynchConsole; // user program console
 #include "ptable.h"
 extern PTable* pTab;
+#include "stable.h"
+extern STable *semTab;
 extern Semaphore *addrLock;
 extern BitMap *gPhysPageBitMap;
 #endif

@@ -35,7 +35,7 @@ CPP = gcc -E
 INCDIR =-I../userprog -I../threads
 CFLAGS = -G 0 -c $(INCDIR)
  
-all: halt shell matmult sort createfile echo cat copy ping pong scheduler
+all: halt shell matmult sort createfile echo cat copy ping pong scheduler ping_sync pong_sync scheduler_sync
 
 start.o: start.s ../userprog/syscall.h
 	$(CPP) $(CPPFLAGS) start.c > strt.s
@@ -106,4 +106,22 @@ scheduler.o: scheduler.c
 	$(CC) $(CFLAGS) -c scheduler.c
 scheduler: scheduler.o start.o
 	$(LD) $(LDFLAGS) start.o scheduler.o -o scheduler.coff
-	../bin/coff2noff scheduler.coff scheduler	
+	../bin/coff2noff scheduler.coff scheduler
+	
+ping_sync.o: ping_sync.c
+	$(CC) $(CFLAGS) -c ping_sync.c
+ping_sync: ping_sync.o start.o
+	$(LD) $(LDFLAGS) start.o ping_sync.o -o ping_sync.coff
+	../bin/coff2noff ping_sync.coff ping_sync	
+	
+pong_sync.o: pong_sync.c
+	$(CC) $(CFLAGS) -c pong_sync.c
+pong_sync: pong_sync.o start.o
+	$(LD) $(LDFLAGS) start.o pong_sync.o -o pong_sync.coff
+	../bin/coff2noff pong_sync.coff pong_sync	
+	
+scheduler_sync.o: scheduler_sync.c
+	$(CC) $(CFLAGS) -c scheduler_sync.c
+scheduler_sync: scheduler_sync.o start.o
+	$(LD) $(LDFLAGS) start.o scheduler_sync.o -o scheduler_sync.coff
+	../bin/coff2noff scheduler_sync.coff scheduler_sync
